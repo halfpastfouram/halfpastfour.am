@@ -1,0 +1,12 @@
+{
+  "name": "halfpastfouram/halfpastfour.am",
+  "description": "Halfpastfour.am website",
+  "minimum-stability": "stable",
+  "version": "dev-master",
+  "license": "Apache 2.0",
+  "authors": [
+    {
+      "name": "Bob Kruithof"
+    }
+  ]
+}
