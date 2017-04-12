@@ -190,9 +190,12 @@ function Clock()
     backPanelsParts.layerTop.receiveShadow = true;
     scene.add(backPanelsParts.layerTop);
 
+    positionStorage.backPanels.top.rotation = backPanelsParts.layerTop.rotation;
+    positionStorage.backPanels.top.position = backPanelsParts.layerTop.position;
+
     // Add hour hand
     hands.hour = new THREE.Mesh(
-      new THREE.CubeGeometry(0.1, 2.5, 0.1).applyMatrix(new THREE.Matrix4().makeTranslation(0, -1.25, 0.101 )),
+      new THREE.CubeGeometry(0.1, 2.5, 0.1).applyMatrix(new THREE.Matrix4().makeTranslation(0, 1.25, 0.101 )),
       new THREE.MeshLambertMaterial({ color: 0xffffff })
     );
 
@@ -200,9 +203,12 @@ function Clock()
     hands.hour.receiveShadow = true;
     scene.add( hands.hour );
 
+    positionStorage.hands.hour.rotation = hands.hour.rotation;
+    positionStorage.hands.hour.position = hands.hour.position;
+
     // Add minute hand
     hands.minute = new THREE.Mesh(
-      new THREE.CubeGeometry(0.1, 3.5, 0.1).applyMatrix(new THREE.Matrix4().makeTranslation(0, -1.75, 0.1251 )),
+      new THREE.CubeGeometry(0.1, 3.5, 0.1).applyMatrix(new THREE.Matrix4().makeTranslation(0, 1.75, 0.1251 )),
       new THREE.MeshLambertMaterial({ color: 0xffffff })
     );
 
@@ -210,15 +216,21 @@ function Clock()
     hands.minute.receiveShadow = true;
     scene.add( hands.minute );
 
+    positionStorage.hands.minute.rotation = hands.minute.rotation;
+    positionStorage.hands.minute.position = hands.minute.position;
+
     // Add seconds hand
     hands.second = new THREE.Mesh(
-      new THREE.CubeGeometry(0.1, 4, 0.1).applyMatrix(new THREE.Matrix4().makeTranslation(0, -2, 0.2501)),
+      new THREE.CubeGeometry(0.1, 4, 0.1).applyMatrix(new THREE.Matrix4().makeTranslation(0, 2, 0.2501)),
       new THREE.MeshLambertMaterial({ color: 0xff0000 })
     );
 
     hands.second.castShadow = true;
     hands.second.receiveShadow = true;
     scene.add( hands.second );
+
+    positionStorage.hands.second.rotation = hands.second.rotation;
+    positionStorage.hands.second.position = hands.second.position;
 
     // Add front panels
     frontPanelsParts.layerTop = new THREE.Mesh(
@@ -230,12 +242,15 @@ function Clock()
 
     frontPanelsParts.layerTop.castShadow = true;
     scene.add(frontPanelsParts.layerTop);
+
+    positionStorage.frontPanels.top.rotation = frontPanelsParts.layerTop.rotation;
+    positionStorage.frontPanels.top.position = frontPanelsParts.layerTop.position;
   }
 
   /**
    * Add lighting to the scene
    */
-	function addLighting()
+  function addLighting()
   {
     console.log("Adding lighting...");
 
@@ -258,8 +273,6 @@ function Clock()
    */
   function setCameraPosition(coords)
   {
-    console.log("Setting camera position to", coords);
-
     camera.position.x = -coords.x / 100;
     camera.position.y = coords.y / 100;
     camera.lookAt( { x: 0, y: 0, z: 0 } );
@@ -290,10 +303,23 @@ function Clock()
    */
   function onMouseMove(event)
   {
-      currentMousePos.x = event.clientX - window.innerWidth / 2;
-      currentMousePos.y = event.clientY - window.innerHeight / 2;
+    currentMousePos.x = event.clientX - window.innerWidth / 2;
+    currentMousePos.y = event.clientY - window.innerHeight / 2;
 
-      setCameraPosition( currentMousePos );
+    setCameraPosition( currentMousePos );
+  }
+
+  /**
+   * Calculate the angle from the given value and base.
+   *
+   * @param {number} value
+   * @param {number} base
+   * @returns {number}
+   */
+  function calculateAngle(value, base)
+  {
+    var angle = 360 / base * value;
+    return -(Math.PI / 180) * angle;
   }
 
   /**
@@ -302,7 +328,8 @@ function Clock()
    */
   this.setSeconds = function(seconds)
   {
-    hands.second.rotation.z = -( ( Math.PI / 30 ) * seconds ) + Math.PI;
+    hands.second.rotation.z = calculateAngle(seconds, 60);
+    positionStorage.hands.second.rotation = hands.second.rotation;
   };
 
   /**
@@ -311,7 +338,8 @@ function Clock()
    */
   this.setMinutes = function(minutes)
   {
-    hands.minute.rotation.z = -( ( Math.PI / 30 ) * minutes ) + Math.PI;
+    hands.minute.rotation.z = calculateAngle(minutes, 60);
+    positionStorage.hands.minute.rotation = hands.minute.rotation;
   };
 
   /**
@@ -320,12 +348,13 @@ function Clock()
    */
   this.setHours = function(hours)
   {
-    hands.hour.rotation.z = -( ( Math.PI / 30 ) * hours ) + Math.PI;
+    hands.hour.rotation.z = calculateAngle(hours, 12);
+    positionStorage.hands.hour.rotation = hands.hour.rotation;
   };
 
   function explosionIncrement()
   {
-
+    // The base circle stays where it is. The first part to be moved is the small circle.
   }
 
   function explosionDecrement()
@@ -344,8 +373,12 @@ function Clock()
     if (self.animate) {
       var date = new Date();
       self.setSeconds(date.getSeconds());
-      self.setMinutes(date.getMinutes());
-      self.setHours(date.getHours());
+
+      // Also move the hand a bit every second
+      self.setMinutes(date.getMinutes() + ((1 / 60)*date.getSeconds()));
+
+		// Also move the hand a bit every minute
+      self.setHours(date.getHours() + ((1 / 60)*date.getMinutes()));
 
       renderer.render(scene, camera);
     }
