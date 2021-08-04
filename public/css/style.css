@@ -1,0 +1,40 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    background-image: -webkit-gradient(linear, left bottom, right top, from(#6d327c), color-stop(#485da6), color-stop(#00a1ba), color-stop(#00bf98), to(#36c486));
+    background-image: -webkit-linear-gradient(left bottom, #6d327c, #485da6, #00a1ba, #00bf98, #36c486);
+    background-image: -o-linear-gradient(left bottom, #6d327c, #485da6, #00a1ba, #00bf98, #36c486);
+    background-image: linear-gradient(to right top, #6d327c, #485da6, #00a1ba, #00bf98, #36c486);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.jumbotron {
+    background: rgba(255, 255, 255, .5);
+}
+
+table.table {
+    background: rgba(255, 255, 255, .1);
+}
+
+table.table tr {
+    color: white !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd)
+{
+    background: rgba(255, 255, 255, .1);
+}
+
+.table-hover tbody tr:hover
+{
+    background: rgba(255, 255, 255, .15) !important;
+}
+
+p a {
+    color: white;
+    text-decoration: underline;
+}
