@@ -8,5 +8,9 @@
     {
       "name": "Bob Kruithof"
     }
-  ]
+  ],
+  "require": {
+    "ext-dom": "*",
+    "ext-json": "*"
+  }
 }
